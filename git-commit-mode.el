@@ -256,39 +256,43 @@
         (comitter-email (git-commit-comitter-email)))
     (git-commit-insert-header type comitter-name comitter-email note)))
 
-(defun git-commit-signoff (&optional note)
-  (interactive
-   (list (when current-prefix-arg t)))
-  (git-commit-insert-header-as-self "Signed-off-by" note))
-
-(defun git-commit-ack (&optional note)
-  (interactive
-   (list (when current-prefix-arg t)))
-  (git-commit-insert-header-as-self "Acked-by" note))
-
-(defun git-commit-test (&optional note)
-  (interactive
-   (list (when current-prefix-arg t)))
-  (git-commit-insert-header-as-self "Tested-by" note))
-
-(defun git-commit-review (&optional note)
-  (interactive
-   (list (when current-prefix-arg t)))
-  (git-commit-insert-header-as-self "Reviewed-by" note))
-
-(defun git-commit-cc (name email &optional note)
-  (interactive
-   (list (read-string "Name: ")
-         (read-string "Email: ")
-         (when current-prefix-arg t)))
-  (git-commit-insert-header "Cc" name email note))
-
-(defun git-commit-reported (name email &optional note)
-  (interactive
-   (list (read-string "Name: ")
-         (read-string "Email: ")
-         (when current-prefix-arg t)))
-  (git-commit-insert-header "Reported-by" name email note))
+(let* ((self-funs '(("signoff" . "Signed-off-by")
+                    ("ack"     . "Acked-by")
+                    ("test"    . "Tested-by")
+                    ("review"  . "Reviewed-by")))
+       (name-funs '(("cc"       . "Cc")
+                    ("reported" . "Reported-by")))
+       (build-name (lambda (name) (intern (concat "git-commit-" name))))
+       (build-args (lambda (needs-name)
+                     (if needs-name
+                         '(name email &optional note)
+                       '(&optional note))))
+       (build-inter (lambda (needs-name)
+                      (let ((prefix-arg '((when current-prefix-arg t))))
+                        (if needs-name
+                            (cons '(read-string "Name: ")
+                                  (cons '(read-string "Email: ") prefix-arg))
+                          prefix-arg))))
+       (build-fun-to-call (lambda (needs-name) (if needs-name
+                                                   'git-commit-insert-header
+                                                 'git-commit-insert-header-as-self)))
+       (build-vals (lambda (header needs-name) (if needs-name
+                                                   `(,header name email note)
+                                                 `(,header note))))
+       (register-fun (lambda (name header needs-name)
+                       (let* ((name  (funcall build-name name))
+                              (args  (funcall build-args needs-name))
+                              (inter (funcall build-inter needs-name))
+                              (fun   (funcall build-fun-to-call needs-name))
+                              (vals  (funcall build-vals header needs-name)))
+                         (eval `(defun ,name ,args
+                                  (interactive (list ,@inter))
+                                  (,fun ,@vals))))))
+       (register-funs (lambda (funs needs-name)
+                        (dolist (fun funs)
+                          (funcall register-fun (car fun) (cdr fun) needs-name)))))
+  (funcall register-funs self-funs nil)
+  (funcall register-funs name-funs t))
 
 (defvar git-commit-map
   (let ((map (make-sparse-keymap)))
