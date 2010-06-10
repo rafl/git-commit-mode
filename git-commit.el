@@ -174,8 +174,16 @@
   "Face used when a commit is going to be made outside of any branches"
   :group 'git-commit-faces)
 
+(defface git-commit-comment-section-phase
+  '((t :inherit git-commit-branch-face))
+  "Face used to highlight sections in git generated comments")
+
 ;; TODO:
-;;  * modified/untracked/staged/etc files
+;;  * "# Changes to be committed:"
+;;  * "# Untracked files:"
+;;  * "# Changed but not updated:"
+;;  * "# Unmerged paths:"
+;;  + files within those sections: "#\tfoo" or "#\tfoo:\s+bar"
 (defconst git-commit-font-lock-keywords-1
   `(("^\\(#\s+On branch \\)\\(.*\\)$"
      (1 'git-commit-comment-face)
@@ -183,6 +191,20 @@
     ("^\\(#\s+\\)\\(Not currently on any branch.\\)"
      (1 'git-commit-comment-face)
      (2 'git-commit-no-branch-face))
+    ("^\\(#\s\\)\\(Changes to be committed:\\)\n\\(#.*\n\\)+?\\(\\(#\t+\\)\\([^\s:]+\\)\\(:\s+\\)\\(.*\\)\n\\)+"
+     (1 'git-commit-comment-face)
+     (2 'git-commit-comment-section-phase)
+     (3 'git-commit-comment-face)
+     (5 'git-commit-comment-face)
+     (6 'git-commit-branch-face) ; FIXME
+     (7 'git-commit-comment-face)
+     (8 'git-commit-pseudo-header-face)) ; FIXME
+    ("^\\(#\s\\)\\(Untracked files:\\)\n\\(#.*\n\\)+?\\(\\(#\t+\\)\\([^\s:]+\\)\n\\)+"
+     (1 'git-commit-comment-face)
+     (2 'git-commit-comment-section-phase)
+     (3 'git-commit-comment-face)
+     (5 'git-commit-comment-face)
+     (6 'git-commit-pseudo-header-face)) ; FIXME
     ("^#.*$"
      (0 'git-commit-comment-face))
     ("\\`\\(.\\{,50\\}\\)\\(.*?\\)\n\\(.*\\)$"
