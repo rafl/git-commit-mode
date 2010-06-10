@@ -191,7 +191,8 @@
     ("^\\(#\s+\\)\\(Not currently on any branch.\\)"
      (1 'git-commit-comment-face)
      (2 'git-commit-no-branch-face))
-    ("^\\(#\s\\)\\(Changes to be committed:\\)\n\\(#.*\n\\)+?\\(\\(#\t+\\)\\([^\s:]+\\)\\(:\s+\\)\\(.*\\)\n\\)+"
+    (,(concat "^\\(#\s\\)\\(Changes to be committed:\\)\n\\(#.*\n\\)+?"
+             "\\(\\(#\t+\\)\\([^\s:]+\\)\\(:\s+\\)\\(.*\\)\n\\)+")
      (1 'git-commit-comment-face)
      (2 'git-commit-comment-section-phase)
      (3 'git-commit-comment-face)
@@ -199,7 +200,8 @@
      (6 'git-commit-branch-face) ; FIXME
      (7 'git-commit-comment-face)
      (8 'git-commit-pseudo-header-face)) ; FIXME
-    ("^\\(#\s\\)\\(Untracked files:\\)\n\\(#.*\n\\)+?\\(\\(#\t+\\)\\([^\s:]+\\)\n\\)+"
+    (,(concat "^\\(#\s\\)\\(Untracked files:\\)\n\\(#.*\n\\)+?"
+              "\\(\\(#\t+\\)\\([^\s:]+\\)\n\\)+")
      (1 'git-commit-comment-face)
      (2 'git-commit-comment-section-phase)
      (3 'git-commit-comment-face)
@@ -211,7 +213,8 @@
      (1 'git-commit-summary-face)
      (2 'git-commit-overlong-summary-face)
      (3 'git-commit-nonempty-second-line-face))
-    (,(concat "^\\(" (regexp-opt git-commit-known-pseudo-headers) ":\\)\\(\s.*\\)$")
+    (,(concat "^\\(" (regexp-opt git-commit-known-pseudo-headers)
+              ":\\)\\(\s.*\\)$")
      (1 'git-commit-known-pseudo-header-face)
      (2 'git-commit-pseudo-header-face))
     ("^\\w[^\s\n]+:\s.*$"
