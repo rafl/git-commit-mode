@@ -192,7 +192,16 @@
      (1 'git-commit-comment-face)
      (2 'git-commit-no-branch-face))
     (,(concat "^\\(#\s\\)\\(Changes to be committed:\\)\n\\(#.*\n\\)+?"
-             "\\(\\(#\t+\\)\\([^\s:]+\\)\\(:\s+\\)\\(.*\\)\n\\)+")
+              "\\(\\(#\t+\\)\\([^\s:]+\\)\\(:\s+\\)\\(.*\\)\n\\)+")
+     (1 'git-commit-comment-face)
+     (2 'git-commit-comment-section-phase)
+     (3 'git-commit-comment-face)
+     (5 'git-commit-comment-face)
+     (6 'git-commit-branch-face) ; FIXME
+     (7 'git-commit-comment-face)
+     (8 'git-commit-pseudo-header-face)) ; FIXME
+    (,(concat "^\\(#\s\\)\\(Changed but not updated:\\)\n\\(#.*\n\\)+?"
+              "\\(\\(#\t+\\)\\([^\s:]+\\)\\(:\s+\\)\\(.*\\)\n\\)+")
      (1 'git-commit-comment-face)
      (2 'git-commit-comment-section-phase)
      (3 'git-commit-comment-face)
