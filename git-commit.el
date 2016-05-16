@@ -78,6 +78,20 @@
   "Face used to highlight text on the second line of git commit messages"
   :group 'git-commit-faces)
 
+(defface git-commit-overlong-body-face
+  '((((class color) (min-colors 88) (background light))
+     (:foreground "Red1" :weight bold))
+    (((class color) (min-colors 88) (background dark))
+     (:foreground "Pink" :weight bold))
+    (((class color) (min-colors 16) (background light))
+     (:foreground "Red1" :weight bold))
+    (((class color) (min-colors 16) (background dark))
+     (:foreground "Pink" :weight bold))
+    (((class color) (min-colors 8)) (:foreground "red"))
+    (t (:inverse-video t :weight bold)))
+  "Face used to highlight overlong parts of git commit message bodies"
+  :group 'git-commit-faces)
+
 (defface git-commit-text-face
   '((t (:inherit default)))
   "Face used to highlight text in git commit messages"
@@ -273,6 +287,9 @@ default comments in git commit messages"
       (2 'git-commit-note-address-face)
       (3 'git-commit-note-face)
       (4 'git-commit-note-brace-face))
+     ("\\(.\\{,72\\}\\)\\(.*?\\)?$"
+      (1 'git-commit-text-face)
+      (2 'git-commit-overlong-body-face))
      (".*"
       (0 'git-commit-text-face)))))
 
