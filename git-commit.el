@@ -20,6 +20,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defgroup git-commit '((jit-lock custom-group))
   "Mode for editing git commit messages"
   :group 'faces)
@@ -74,6 +76,20 @@
     (((class color) (min-colors 8)) (:foreground "red"))
     (t (:inverse-video t :weight bold)))
   "Face used to highlight text on the second line of git commit messages"
+  :group 'git-commit-faces)
+
+(defface git-commit-overlong-body-face
+  '((((class color) (min-colors 88) (background light))
+     (:foreground "Red1" :weight bold))
+    (((class color) (min-colors 88) (background dark))
+     (:foreground "Pink" :weight bold))
+    (((class color) (min-colors 16) (background light))
+     (:foreground "Red1" :weight bold))
+    (((class color) (min-colors 16) (background dark))
+     (:foreground "Pink" :weight bold))
+    (((class color) (min-colors 8)) (:foreground "red"))
+    (t (:inverse-video t :weight bold)))
+  "Face used to highlight overlong parts of git commit message bodies"
   :group 'git-commit-faces)
 
 (defface git-commit-text-face
@@ -236,7 +252,7 @@ default comments in git commit messages"
    '(("^\\(#\s+On branch \\)\\(.*\\)$"
       (1 'git-commit-comment-face)
       (2 'git-commit-branch-face)))
-   (loop for exp in
+   (cl-loop for exp in
          '(("Not currently on any branch." . git-commit-no-branch-face)
            ("Changes to be committed:"     . git-commit-comment-heading-face)
            ("Untracked files:"             . git-commit-comment-heading-face)
@@ -271,6 +287,9 @@ default comments in git commit messages"
       (2 'git-commit-note-address-face)
       (3 'git-commit-note-face)
       (4 'git-commit-note-brace-face))
+     ("\\(.\\{,72\\}\\)\\(.*?\\)?$"
+      (1 'git-commit-text-face)
+      (2 'git-commit-overlong-body-face))
      (".*"
       (0 'git-commit-text-face)))))
 
@@ -329,7 +348,7 @@ configuration key KEY."
   "Get the value of the first defined environment variable.
 Walk VARS, call `getenv' on each element and return the first
 non-nil return value of `getenv'."
-  (loop for var in vars
+  (cl-loop for var in vars
         do (let ((val (getenv var)))
              (when val (return val)))))
 
